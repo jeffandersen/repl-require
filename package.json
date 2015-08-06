@@ -1,6 +1,6 @@
 {
   "name": "repl-require",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Use .noderc to preload modules into the node repl",
   "bin": {
     "noder": "bin/noder"
