@@ -5,27 +5,57 @@ var repl = require('repl');
 var path = require('path');
 var fs = require('fs');
 
+var modules = {};
 var home = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
-var nodercPath = path.resolve(home + '/.noderc');
-var noderc = fs.readFileSync(nodercPath, 'utf-8').split('\n');
+var pwd = process.env.PWD;
 
+/**
+ * Import globally specified and installed modules
+ */
+var nodercPath = path.resolve(home + '/.noderc');
+if (fs.existsSync(nodercPath)) {
+  var noderc = fs.readFileSync(nodercPath, 'utf-8').split('\n');
+  noderc.forEach(function(line) {
+    if (line.length) {
+      var name = line.split('=');
+      var contextName = name[0];
+      var moduleName = name[1] || contextName;
+      modules[contextName] = moduleName;
+    }
+  });
+}
+
+/**
+ * Import the cwd package.json deps
+ */
+var packageJsonPath = path.resolve(pwd + '/package.json');
+if (fs.existsSync(packageJsonPath)) {
+  var packageJson = require(packageJsonPath);
+  var deps = packageJson.dependencies || {};
+  Object.keys(deps).forEach(function(name) {
+    modules[name] = path.resolve(pwd + '/node_modules/' + name);
+  });
+}
+
+/**
+ * Load the modules onto the specified context
+ */
+function loadModules(context) {
+  Object.keys(modules).forEach(function(contextName) {
+    context[contextName] = require(modules[contextName]);
+  });
+}
+
+/**
+ * Begin the repl
+ */
 var r = repl.start({
   prompt: '> ',
   useGlobal: true,
 });
-loadModules(r.context);
 
 r.on('reset', function(context) {
   loadModules(context);
 });
 
-function loadModules(context) {
-  noderc.forEach(function(includeModule) {
-    if (includeModule.length) {
-      var naming = includeModule.split('=');
-      var contextName = naming[0];
-      var moduleName = naming[1] || contextName;
-      context[contextName] = require(moduleName);
-    }
-  });
-}
+loadModules(r.context);
