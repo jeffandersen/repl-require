@@ -1,0 +1,10 @@
+{
+  "name": "repl-require",
+  "version": "1.0.0",
+  "description": "Use .noderc to preload modules into the node repl",
+  "bin": {
+    "noder": "bin/repl"
+  },
+  "author": "Jeff Andersen <@jeffandersen>",
+  "license": "MIT"
+}

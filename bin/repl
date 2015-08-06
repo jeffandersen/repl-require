@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+'use strict';
+
+var repl = require('repl');
+var path = require('path');
+var fs = require('fs');
+
+var home = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+var nodercPath = path.resolve(home + '/.noderc');
+var noderc = fs.readFileSync(nodercPath, 'utf-8').split('\n');
+
+var r = repl.start({
+  prompt: '> ',
+  useGlobal: true,
+});
+
+r.on('reset', function(context) {
+  loadModules(context);
+});
+
+loadModules(r.context);
+
+function loadModules(context) {
+  noderc.forEach(function(includeModule) {
+    if (includeModule.length) {
+      var naming = includeModule.split('=');
+      var contextName = naming[0];
+      var moduleName = naming[1] || contextName;
+      context[contextName] = require(moduleName);
+    }
+  });
+}
