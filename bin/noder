@@ -13,12 +13,11 @@ var r = repl.start({
   prompt: '> ',
   useGlobal: true,
 });
+loadModules(r.context);
 
 r.on('reset', function(context) {
   loadModules(context);
 });
-
-loadModules(r.context);
 
 function loadModules(context) {
   noderc.forEach(function(includeModule) {

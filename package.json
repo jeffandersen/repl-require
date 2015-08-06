@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Use .noderc to preload modules into the node repl",
   "bin": {
-    "noder": "bin/repl"
+    "noder": "bin/noder"
   },
   "author": "Jeff Andersen <@jeffandersen>",
   "license": "MIT"

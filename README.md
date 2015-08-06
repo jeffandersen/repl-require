@@ -13,7 +13,7 @@ Then, to enter a node repl with your modules use `noder` (or make your own alias
 Create a file in your home directory called `.noderc` which includes a newline delimited list of modules to include, e.g:
 
 ```
-_=lodash
+lo=lodash
 async
 req=request
 ```
